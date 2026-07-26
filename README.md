@@ -1,61 +1,119 @@
-# URL Async Status Checker
+# 🚀 Async URL Checker
 
-This is a fullstack web application for asynchronous background URL checking. It processes a list of URLs and checks their HTTP status using `HEAD` requests with a concurrency limit and simulated random latency.
+*A hyper-clean, high-performance asynchronous URL status verification engine & dashboard built with React, Express, Zustand, and TypeScript.*
 
-## Features
+![React](https://img.shields.io/badge/React-18-blue?style=for-the-badge&logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![Express](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![Zustand](https://img.shields.io/badge/Zustand-🐻-black?style=for-the-badge)
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Vitest](https://img.shields.io/badge/Vitest-6E9F18?style=for-the-badge&logo=vitest&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
 
-- **Asynchronous Processing**: Background job execution limiting to maximum 5 concurrent requests.
-- **Artificial Delay**: Each HEAD request is artificially delayed by a random amount of time (0-10 seconds).
-- **Graceful Cancellation**: Cancel pending requests immediately without interrupting in-flight URLs.
-- **FSD Architecture**: The frontend is built using Feature-Sliced Design.
-- **State Management**: Built-in race-condition-safe polling and robust global state with Zustand.
-- **Dockerized**: Fully production-ready multi-stage Docker builds.
+---
 
-## Tech Stack
+## 🎨 Design Philosophy & Architecture
 
-- **Frontend**: React 18, Vite, TypeScript, TailwindCSS v4, Zustand, Vitest + React Testing Library
-- **Backend**: Node.js, Express, TypeScript, Zod, Axios, p-limit
-- **DevOps**: Docker, Docker Compose, Nginx
+### Minimalist UI & FSD Philosophy
+Built following **Feature-Sliced Design (FSD)** principles, **Async URL Checker** combines production-grade frontend architecture with a clean, distraction-free interface.
+- **Zero Background Noise:** Content-first dashboard focused purely on execution metrics and real-time status tracking.
+- **Real-Time Polling Dashboard:** Instant visual feedback with strict cleanup flags to eliminate stale states.
+- **FSD Architecture:** Clean layer separation (`app`, `widgets`, `features`, `entities`, `shared`) ensuring modularity and maintainability.
 
-## Running with Docker (Recommended)
+---
 
-1. Ensure you have Docker and Docker Compose installed.
-2. In the root of the project, run:
-```bash
-docker-compose up --build
+## ⚙️ System Architecture
+
+```mermaid
+graph LR
+    subgraph Client [Client / React + FSD]
+        UI[Dashboard & URL Form]
+        Store[Zustand Store]
+        Hook[useJobPolling Hook]
+    end
+
+    subgraph Server [Express Engine]
+        API[REST API Router]
+        Queue[p-limit Queue Manager]
+        Worker[HTTP HEAD Fetcher]
+        Memory[(In-Memory Store)]
+    end
+
+    UI -- "POST /api/jobs (URLs)" --> API
+    API -- "Immediate { jobId }" --> UI
+    API --> Queue
+    Queue --> Worker
+    Worker --> Memory
+    Hook -- "GET /api/jobs/:id (Polling)" --> API
+    API -- "Job Progress JSON" --> Store
 ```
-3. Open the app in your browser: [http://localhost:3000](http://localhost:3000)
 
-## Running Locally (Development)
+---
 
-### Backend
+## 🚀 Features
+- **True Asynchronous Processing:** Jobs are queued and run strictly in the background using `p-limit` for a maximum of 5 concurrent URL checks per job.
+- **Race Condition Immunity:** Carefully designed React hooks and Zustand stores ensure no overlapping intervals or zombie polling states.
+- **Artificial Delay & Timeout:** Enforces 0-10s randomized delays via `Math.random()` and strict 5-second `axios` timeouts to prevent hanging domains.
+- **Job Cancellation:** Instantly halt in-progress background queues safely, leaving processed items intact and terminating pending URLs.
+
+---
+
+## 🛠 Local Setup
+
+**Requirements:** Node.js v20+
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/komilolimov/32-05.git
+   cd 32-05
+   ```
+
+2. **Run Backend:**
+   ```bash
+   cd backend
+   npm install
+   npm run build
+   npm start
+   # Runs on http://localhost:3001
+   ```
+
+3. **Run Frontend:**
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   # Runs on http://localhost:5173
+   ```
+
+---
+
+## 🐳 Docker Deployment
+Fully configured for production environments via multi-stage Docker builds and an Nginx proxy.
+
 ```bash
-cd backend
-npm install
-npm run dev
+# Build and start services in detached mode
+docker-compose up -d --build
 ```
-The backend will run on http://localhost:3001.
+- The Dashboard will be accessible at `http://localhost:3001`
+- The API is proxied seamlessly via `Nginx` behind the scenes.
 
-### Frontend
+---
+
+## 📡 Core API Reference
+
+- `POST /api/jobs` - Create a new check job with a JSON payload `{ "urls": ["..."] }`. Returns `{ "jobId": "..." }` instantly.
+- `GET /api/jobs` - Retrieve all job histories and metadata summaries.
+- `GET /api/jobs/:id` - Fetch detailed execution stats, statuses, duration, and error messages for a specific job.
+- `DELETE /api/jobs/:id` - Force cancel a running job queue.
+
+---
+
+## 🧪 Testing
+Includes high-coverage integration tests built on **Vitest**, specifically targeting race conditions and cancellation behaviors.
+
 ```bash
 cd frontend
-npm install
-npm run dev
+npm test
 ```
-The frontend will run on http://localhost:5173.
-
-### Running Tests
-The frontend includes a deterministic Vitest setup to verify polling behavior and anti-race condition protections.
-```bash
-cd frontend
-npm run test
-```
-
-## REST API Endpoints
-
-| Method | Endpoint | Description |
-|---|---|---|
-| **POST** | `/api/jobs` | Create a new job. Body: `{ "urls": ["http://ex.com"] }` |
-| **GET**  | `/api/jobs` | Get list of all jobs with stats summary |
-| **GET**  | `/api/jobs/:id` | Get detailed URL status for a specific job |
-| **DELETE** | `/api/jobs/:id` | Cancel the specified job (aborts pending URLs) |
