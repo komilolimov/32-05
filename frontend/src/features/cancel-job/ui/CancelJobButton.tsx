@@ -18,7 +18,7 @@ export function CancelJobButton({ job }: CancelJobButtonProps) {
     <button
       onClick={() => void cancelJob(job.id)}
       disabled={isCancelling}
-      className="bg-red-100 hover:bg-red-200 text-red-700 py-1 px-4 rounded font-medium transition-colors disabled:opacity-50 text-sm"
+      className="bg-transparent border border-zinc-800 hover:border-red-900 hover:bg-red-950/30 text-red-500 py-1 px-4 rounded-md font-medium transition-colors disabled:opacity-50 text-sm tracking-tight"
     >
       {isCancelling ? 'Cancelling...' : 'Cancel Job'}
     </button>

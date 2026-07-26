@@ -7,21 +7,21 @@ interface UrlTableProps {
 
 export function UrlTable({ results }: UrlTableProps) {
   return (
-    <div className="overflow-x-auto border border-gray-200 rounded-lg">
-      <table className="w-full text-sm text-left text-gray-500">
-        <thead className="text-xs text-gray-700 uppercase bg-gray-50 border-b border-gray-200">
+    <div className="overflow-x-auto border border-zinc-800 rounded-lg">
+      <table className="w-full text-sm text-left text-zinc-400">
+        <thead className="text-[10px] text-zinc-500 uppercase tracking-wider bg-zinc-950 border-b border-zinc-800 font-mono">
           <tr>
-            <th scope="col" className="px-6 py-3">URL</th>
-            <th scope="col" className="px-6 py-3">Status</th>
-            <th scope="col" className="px-6 py-3">HTTP Status</th>
-            <th scope="col" className="px-6 py-3">Duration</th>
-            <th scope="col" className="px-6 py-3">Error</th>
+            <th scope="col" className="px-6 py-3 font-medium">URL</th>
+            <th scope="col" className="px-6 py-3 font-medium">Status</th>
+            <th scope="col" className="px-6 py-3 font-medium">HTTP Status</th>
+            <th scope="col" className="px-6 py-3 font-medium">Duration</th>
+            <th scope="col" className="px-6 py-3 font-medium">Error</th>
           </tr>
         </thead>
         <tbody>
           {results.map((res, idx) => (
-            <tr key={idx} className="bg-white border-b last:border-0 hover:bg-gray-50">
-              <td className="px-6 py-4 font-medium text-gray-900 truncate max-w-xs" title={res.url}>
+            <tr key={idx} className="bg-zinc-950 border-b border-zinc-800 last:border-0 hover:bg-zinc-900/50 transition-colors">
+              <td className="px-6 py-4 font-mono text-xs text-zinc-200 truncate max-w-xs" title={res.url}>
                 {res.url}
               </td>
               <td className="px-6 py-4">
@@ -29,20 +29,20 @@ export function UrlTable({ results }: UrlTableProps) {
               </td>
               <td className="px-6 py-4">
                 {res.httpStatus !== null ? (
-                  <span className="font-mono bg-gray-100 px-2 py-1 rounded text-xs">{res.httpStatus}</span>
+                  <span className="font-mono bg-zinc-900 border border-zinc-800 px-2 py-1 rounded text-xs text-zinc-300">{res.httpStatus}</span>
                 ) : (
-                  <span className="text-gray-400">-</span>
+                  <span className="text-zinc-600 font-mono">-</span>
                 )}
               </td>
               <td className="px-6 py-4">
                 {res.durationMs !== undefined ? (
-                  <span className="text-gray-600">{(res.durationMs / 1000).toFixed(1)}s</span>
+                  <span className="text-zinc-400 font-mono text-xs">{(res.durationMs / 1000).toFixed(1)}s</span>
                 ) : (
-                  <span className="text-gray-400">-</span>
+                  <span className="text-zinc-600 font-mono">-</span>
                 )}
               </td>
-              <td className="px-6 py-4 text-red-500">
-                {res.error || <span className="text-gray-400">-</span>}
+              <td className="px-6 py-4 text-red-400 font-mono text-xs">
+                {res.error || <span className="text-zinc-600">-</span>}
               </td>
             </tr>
           ))}

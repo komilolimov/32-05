@@ -3,15 +3,15 @@ import { clsx } from 'clsx';
 
 export function UrlStatusBadge({ status }: { status: UrlStatus }) {
   const styles: Record<UrlStatus, string> = {
-    pending: 'bg-gray-100 text-gray-700',
-    in_progress: 'bg-blue-100 text-blue-700',
-    success: 'bg-green-100 text-green-700',
-    error: 'bg-red-100 text-red-700',
-    cancelled: 'bg-orange-100 text-orange-700',
+    pending: 'border-zinc-700 text-zinc-400 bg-zinc-900/50',
+    in_progress: 'border-blue-900/50 text-blue-400 bg-blue-950/30',
+    success: 'border-emerald-900/50 text-emerald-400 bg-emerald-950/30',
+    error: 'border-red-900/50 text-red-400 bg-red-950/30',
+    cancelled: 'border-amber-900/50 text-amber-400 bg-amber-950/30',
   };
 
   return (
-    <span className={clsx('px-2 py-0.5 rounded text-xs font-medium uppercase tracking-wider', styles[status])}>
+    <span className={clsx('px-2 py-0.5 rounded-full border text-xs font-mono uppercase tracking-wider', styles[status])}>
       {status.replace('_', ' ')}
     </span>
   );
